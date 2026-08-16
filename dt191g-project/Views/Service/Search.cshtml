@@ -1,0 +1,90 @@
+﻿@model IEnumerable<dt191g_project.Models.Service>
+@{
+    ViewData["Title"] = "Sök tjänster";
+    var filter = ViewBag.Filter as dt191g_project.Models.ServiceFilterModel;
+}
+
+<h2 class="mb-3">Sök tjänster</h2>
+
+<form asp-action="Search" method="get" class="mb-4">
+
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Företagsnamn</label>
+            <input type="text" name="CompanyName" value="@filter?.CompanyName" class="form-control" placeholder="Ex: Salong Sofia" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Stad</label>
+            <input type="text" name="City" value="@filter?.City" class="form-control" placeholder="Ex: Norrköping" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Kategori</label>
+            <select name="Category" class="form-control">
+                <option value="">Alla kategorier</option>
+                <option value="Frisör" selected="@(filter?.Category == "Frisör")">Frisör</option>
+                <option value="Massage" selected="@(filter?.Category == "Massage")">Massage</option>
+                <option value="Städning" selected="@(filter?.Category == "Städning")">Städning</option>
+                <option value="Skönhet" selected="@(filter?.Category == "Skönhet")">Skönhet</option>
+            </select>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Behandlingstid (minuter)</label>
+            <input type="number" name="DurationMinutes" value="@filter?.DurationMinutes" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Min pris</label>
+            <input type="number" name="MinPrice" value="@filter?.MinPrice" class="form-control" />
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Max pris</label>
+            <input type="number" name="MaxPrice" value="@filter?.MaxPrice" class="form-control" />
+        </div>
+
+        <div class="col-md-3 mb-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Sök</button>
+        </div>
+    </div>
+
+</form>
+
+<hr />
+
+<h3 class="mb-3">Resultat</h3>
+
+@if (!Model.Any())
+{
+    <p>Inga tjänster matchar din sökning.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var service in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@service.Title</h5>
+                        <p class="card-text">
+                            <strong>Företag:</strong> @service.Company.Name <br />
+                            <strong>Kategori:</strong> @service.Company.Category <br />
+                            <strong>Stad:</strong> @service.Company.City <br />
+                            <strong>Pris:</strong> @service.Price kr <br />
+                            <strong>Längd:</strong> @service.DurationMinutes min
+                        </p>
+
+                        <a asp-action="TimeSlots" asp-route-serviceId="@service.Id" class="btn btn-success">
+                            Visa lediga tider
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,81 +1,47 @@
 @model dt191g_project.Models.Booking
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Ta bort bokning";
 }
 
-<h1>Delete</h1>
+<h1 class="text-danger">Ta bort bokning</h1>
+<p class="lead">Är du säker på att du vill ta bort denna bokning från systemet?</p>
+<hr />
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Booking</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CustomerName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CustomerName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CustomerEmail)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CustomerEmail)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CustomerPhone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CustomerPhone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Notes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Notes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Service)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Service.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TimeSlot)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TimeSlot.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Customer)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Customer.Id)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card border-danger shadow-sm mb-4">
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Kundnamn</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.CustomerName)</dd>
+
+                    <dt class="col-sm-4">E-post</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.CustomerEmail)</dd>
+
+                    <dt class="col-sm-4">Tjänst</dt>
+                    <dd class="col-sm-8">@(Model.Service?.Title ?? "Ej angiven")</dd>
+
+                    <dt class="col-sm-4">Tidslucka</dt>
+                    <dd class="col-sm-8">
+                        @(Model.TimeSlot != null
+                            ? $"{Model.TimeSlot.StartTime:yyyy-MM-dd HH:mm} - {Model.TimeSlot.EndTime:HH:mm}"
+                            : "N/A")
+                    </dd>
+
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-secondary">@Model.Status</span>
+                    </dd>
+                </dl>
+            </div>
+            <div class="card-footer bg-light">
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="Id" />
+                    <button type="submit" class="btn btn-danger">Bekräfta borttagning</button>
+                    <a asp-action="Index" class="btn btn-secondary ms-2">Avbryt</a>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

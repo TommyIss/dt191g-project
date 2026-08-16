@@ -25,6 +25,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<UserCompanyService>();
 
+builder.Services.AddTransient<EmailService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

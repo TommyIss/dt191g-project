@@ -1,0 +1,46 @@
+﻿@model IEnumerable<dt191g_project.Models.TimeSlot>
+@{
+    var service = ViewBag.Service as dt191g_project.Models.Service;
+    ViewData["Title"] = "Lediga tider";
+}
+
+<h2>Lediga tider för @service.Title</h2>
+<p><strong>Företag:</strong> @service.Company.Name</p>
+<p><strong>Kategori:</strong> @service.Company.Category</p>
+<p><strong>Stad:</strong> @service.Company.City</p>
+
+<hr />
+
+@if (!Model.Any())
+{
+    <p>Det finns inga lediga tider just nu.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var slot in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @slot.StartTime.ToString("yyyy-MM-dd")
+                        </h5>
+
+                        <p class="card-text">
+                            <strong>Start:</strong> @slot.StartTime.ToString("HH:mm") <br />
+                            <strong>Slut:</strong> @slot.EndTime.ToString("HH:mm") <br />
+                        </p>
+
+                        <a asp-controller="Service"
+                            asp-action="Book"
+                           asp-route-timeSlotId="@slot.Id"
+                           class="btn btn-success w-100">
+                            Boka denna tid
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

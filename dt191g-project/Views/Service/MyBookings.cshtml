@@ -1,0 +1,46 @@
+﻿@model IEnumerable<dt191g_project.Models.Booking>
+
+@{
+    ViewData["Title"] = "Mina bokningar";
+}
+
+<h2 class="mb-3">Mina bokningar</h2>
+<hr />
+
+@if (Model == null || !Model.Any())
+{
+    <p>Du har inga bokningar ännu.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var booking in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+
+                        <h5 class="card-title">@(booking.Service?.Title ?? "Ingen titel")</h5>
+
+                        <p class="card-text">
+                            <strong>Företag:</strong> @(booking.Service?.Company?.Name ?? "Ej angivet") <br />
+                            <strong>Datum:</strong> @(booking.TimeSlot != null ? booking.TimeSlot.StartTime.ToString("yyyy-MM-dd") : "N/A") <br />
+                            <strong>Starttid:</strong> @(booking.TimeSlot != null ? booking.TimeSlot.StartTime.ToString("HH:mm") : "N/A") <br />
+                            <strong>Sluttid:</strong> @(booking.TimeSlot != null ? booking.TimeSlot.EndTime.ToString("HH:mm") : "N/A") <br />
+                            <strong>Pris:</strong> @(booking.Service?.Price) kr <br />
+                            <strong>Status:</strong> @booking.Status
+                        </p>
+
+                        <form asp-action="CancelBooking" method="post" onsubmit="return confirm('Är du säker på att du vill avboka?');">
+                            <input type="hidden" name="bookingId" value="@booking.Id" />
+                            <button type="submit" class="btn btn-danger w-100">
+                                Avboka
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

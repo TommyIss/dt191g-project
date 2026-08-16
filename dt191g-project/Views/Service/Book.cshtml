@@ -1,0 +1,37 @@
+﻿@model dt191g_project.Models.TimeSlot
+
+@{
+    ViewData["Title"] = "Bekräfta bokning";
+}
+
+<h2>Bekräfta bokning</h2>
+<hr />
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h4 class="card-title">@Model.Service.Title</h4>
+
+        <p class="card-text">
+            <strong>Företag:</strong> @Model.Company.Name <br />
+            <strong>Kategori:</strong> @Model.Company.Category <br />
+            <strong>Stad:</strong> @Model.Company.City <br />
+            <strong>Pris:</strong> @Model.Service.Price kr <br />
+            <strong>Längd:</strong> @Model.Service.DurationMinutes min <br />
+            <strong>Datum:</strong> @Model.StartTime.ToString("yyyy-MM-dd") <br />
+            <strong>Starttid:</strong> @Model.StartTime.ToString("HH:mm") <br />
+            <strong>Sluttid:</strong> @Model.EndTime.ToString("HH:mm")
+        </p>
+
+        <form asp-action="BookConfirmed" method="post">
+            <input type="hidden" name="timeSlotId" value="@Model.Id" />
+
+            <button type="submit" class="btn btn-success w-25">
+                Bekräfta bokning
+            </button>
+        </form>
+    </div>
+</div>
+
+<a asp-action="TimeSlots" asp-route-serviceId="@Model.ServiceId" class="btn btn-secondary">
+    Tillbaka till lediga tider
+</a>

@@ -17,19 +17,16 @@
                     Företagsdashboard
                 </a>
             </li>
-
-            @if(companyUser.Role == "Admin")
-            {
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-controller="CompanyUser" asp-action="Index" asp-route-companyId="@companyUser.CompanyId">
-                        Hantera medarbetare
-                    </a>
-                </li>
-            }
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-controller="Service" asp-action="MyBookings">Mina bokningar</a>
+            </li>
         } 
         else
         {
             <!-- Inloggad men inte företag -->
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-controller="Service" asp-action="MyBookings">Mina bokningar</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-controller="CompanyRegistration" asp-action="Index">Registrera företag</a>
             </li>
