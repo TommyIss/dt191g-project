@@ -1,0 +1,48 @@
+@model dt191g_project.Models.CompanyUser
+
+@{
+    ViewData["Title"] = "Detaljer för medarbetare";
+}
+
+<h1>Detaljer för medarbetare</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Medarbetarinformation</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">E-post / Användare</dt>
+                    <dd class="col-sm-8">
+                        @(Model.User?.UserName ?? Model.User?.Email ?? "Saknas")
+                    </dd>
+
+                    <dt class="col-sm-4">Roll</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge @(Model.Role == "Admin" ? "bg-danger" : "bg-info") text-white">
+                            @(Model.Role == "Admin" ? "Admin" : "Medarbetare")
+                        </span>
+                    </dd>
+
+                    <dt class="col-sm-4">Företag</dt>
+                    <dd class="col-sm-8">
+                        @(Model.Company?.Name ?? "Ej angivet")
+                    </dd>
+
+                    <dt class="col-sm-4">Skapad datum</dt>
+                    <dd class="col-sm-8">
+                        @Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                    </dd>
+
+                </dl>
+            </div>
+            <div class="card-footer bg-light d-flex gap-2">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Redigera</a>
+                <a asp-action="Index" class="btn btn-secondary">Tillbaka till listan</a>
+            </div>
+        </div>
+    </div>
+</div>

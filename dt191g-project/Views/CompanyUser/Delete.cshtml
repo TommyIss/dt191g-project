@@ -1,0 +1,56 @@
+@model dt191g_project.Models.CompanyUser
+
+@{
+    ViewData["Title"] = "Ta bort medarbetare";
+}
+
+<h1>Ta bort medarbetare</h1>
+
+<div class="alert alert-danger mt-3" role="alert">
+    <h4 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> Är du säker?</h4>
+    <p class="mb-0">Du är på väg att ta bort kopplingen för denna medarbetare från företaget. Åtgärden går inte att ångra.</p>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card border-danger shadow-sm">
+            <div class="card-header bg-danger text-white">
+                <h5 class="card-title mb-0">Information om kopplingen</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">E-post / Användare</dt>
+                    <dd class="col-sm-8">
+                        @(Model.User?.Email ?? Model.User?.UserName ?? "Saknas")
+                    </dd>
+
+                    <dt class="col-sm-4">Roll</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge @(Model.Role == "Admin" ? "bg-danger" : "bg-info") text-white">
+                            @(Model.Role == "Admin" ? "Admin" : "Medarbetare")
+                        </span>
+                    </dd>
+
+                    <dt class="col-sm-4">Företag</dt>
+                    <dd class="col-sm-8">
+                        @(Model.Company?.Name ?? "Ej angivet")
+                    </dd>
+
+                    <dt class="col-sm-4">Tillagd datum</dt>
+                    <dd class="col-sm-8">
+                        @Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                    </dd>
+                </dl>
+            </div>
+            <div class="card-footer bg-light">
+                <form asp-action="Delete" method="post" class="d-flex gap-2">
+                    <input type="hidden" asp-for="Id" />
+                    <button type="submit" class="btn btn-danger">
+                        Ja, ta bort kopplingen
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">Avbryt</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

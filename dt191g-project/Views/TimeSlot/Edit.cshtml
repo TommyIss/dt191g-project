@@ -1,0 +1,61 @@
+@model dt191g_project.Models.TimeSlot
+
+@{
+    ViewData["Title"] = "Redigera tidslucka";
+}
+
+<h1>Redigera tidslucka</h1>
+<hr />
+<div class="row">
+    <div class="col-md-5">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <!-- Dolda fält -->
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CompanyId" />
+            <input type="hidden" asp-for="CreatedAt" />
+
+            <!-- Koppling till Tjänst -->
+            <div class="form-group mb-3">
+                <label class="form-label">Kopplad tjänst</label>
+                <select asp-for="ServiceId" class="form-control" asp-items="ViewBag.Services">
+                    <option value="">-- Välj tjänst --</option>
+                </select>
+                <span asp-validation-for="ServiceId" class="text-danger"></span>
+            </div>
+
+            <!-- Starttid -->
+            <div class="form-group mb-3">
+                <label asp-for="StartTime" class="form-label">Starttid</label>
+                <input asp-for="StartTime" class="form-control" type="datetime-local" />
+                <span asp-validation-for="StartTime" class="text-danger"></span>
+            </div>
+
+            <!-- Sluttid -->
+            <div class="form-group mb-3">
+                <label asp-for="EndTime" class="form-label">Sluttid</label>
+                <input asp-for="EndTime" class="form-control" type="datetime-local" />
+                <span asp-validation-for="EndTime" class="text-danger"></span>
+            </div>
+
+            <!-- Bokningsstatus -->
+            <div class="form-group form-check mb-3">
+                <input class="form-check-input" asp-for="IsBooked" />
+                <label class="form-check-label" asp-for="IsBooked">Är tidsluckan bokad?</label>
+            </div>
+
+            <!-- Spara-knapp -->
+            <div class="form-group mt-3">
+                <input type="submit" value="Spara ändringar" class="btn btn-primary" />
+                <a asp-action="Index" asp-route-companyId="@Model.CompanyId" class="btn btn-secondary ms-2">Tillbaka till listan</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

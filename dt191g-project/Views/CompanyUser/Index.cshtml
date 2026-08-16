@@ -1,0 +1,39 @@
+@model IEnumerable<dt191g_project.Models.CompanyUser>
+
+@{
+    ViewData["Title"] = "Medarbetare";
+}
+
+<h1>Medarbetare</h1>
+
+<p>
+    <a asp-controller="CompanyUser" asp-action="Create" class="btn btn-primary">Lägg till en ny medarbetare</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Role)</th>
+            <th>@Html.DisplayNameFor(model => model.CreatedAt)</th>
+            <th>Användare</th>
+            <th>Företag</th>
+            <th>Åtgärder</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@(item.Role == "Admin" ? "Admin" : "Medarbetare")</td>
+                <td>@item.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@(item.User?.UserName ?? item.User?.Email ?? "Okänd")</td>
+                <td>@(item.Company?.Name ?? "-")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Ändra</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detaljer</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Ta bort</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

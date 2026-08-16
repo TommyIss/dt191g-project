@@ -1,0 +1,65 @@
+@model dt191g_project.Models.Service
+
+@{
+    ViewData["Title"] = "Skapa tjänst";
+}
+
+<h1>Skapa tjänst</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <!-- Ändra till "All" för att se exakta fel om valideringen faller -->
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <!-- Dölj CompanyId så det skickas med till controllern -->
+            <input type="hidden" asp-for="CompanyId" value="@ViewBag.CompanyId" />
+
+            <div class="form-group mb-3">
+                <label asp-for="Title" class="control-label">Titel</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Description" class="control-label">Beskrivning</label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="DurationMinutes" class="control-label">Varaktighet (minuter)</label>
+                <input asp-for="DurationMinutes" class="form-control" type="number" />
+                <span asp-validation-for="DurationMinutes" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Price" class="control-label">Pris (kr)</label>
+                <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Category" class="control-label">Kategori</label>
+                <input asp-for="Category" class="form-control" />
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+
+            <div class="form-group form-check mb-3">
+                <input class="form-check-input" asp-for="IsActive" />
+                <label class="form-check-label" asp-for="IsActive">Aktiv</label>
+            </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="Skapa" class="btn btn-primary" />
+                <a asp-controller="CompanyDashboard" asp-action="Index" asp-route-companyId="@ViewBag.CompanyId" class="btn btn-secondary ms-2">Tillbaka</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

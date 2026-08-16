@@ -1,5 +1,6 @@
 using dt191g_project.Data;
 using dt191g_project.Models;
+using dt191g_project.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -21,6 +22,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<UserCompanyService>();
 
 var app = builder.Build();
 

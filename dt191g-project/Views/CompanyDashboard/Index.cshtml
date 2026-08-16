@@ -1,0 +1,120 @@
+﻿@model dt191g_project.Models.CompanyDashboardModel
+
+<div class="container mt-4">
+
+    @*  Företagsnamn  *@
+    <h2>@Model.Company.Name – Dashboard</h2>
+    <p class="text-muted">@Model.Company.Description</p>
+
+    <hr />
+
+     @* Företagsinfo  *@
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h4>Företagsinformation</h4>
+            <p><strong>Adress:</strong> @Model.Company.Address</p>
+            <p><strong>Stad:</strong> @Model.Company.City</p>
+            <p><strong>Telefon:</strong> @Model.Company.PhoneNumber</p>
+            <p><strong>E‑post:</strong> @Model.Company.Email</p>
+            <p><strong>Kategori:</strong> @Model.Company.Category</p>
+            <p><strong>Öppettider:</strong> @Model.Company.OpeningsHours</p>
+            @if(Model.Role == "Admin")
+            {
+                <a class="btn btn-warning me-2"
+                   asp-controller="Company"
+                   asp-action="Edit"
+                   asp-route-id="@Model.Company.Id">
+                    Ändra företagsinformation
+                </a>
+            }
+        </div>
+
+        <div class="col-md-6">
+            <h4>Statistik</h4>
+            <p><strong>Tjänster:</strong> @Model.ServicesCount st</p>
+            <p><strong>Tidsluckor:</strong> @Model.TimeSlotsCount st</p>
+            <p><strong>Bokningar:</strong> @Model.BookingsCount st</p>
+        </div>
+    </div>
+
+    <hr />
+
+     @* Snabbknappar *@
+    <h4>Snabbval</h4>
+    <div class="mb-4">
+        <a class="btn btn-success me-2"
+           asp-controller="Service"
+           asp-action="Create"
+           asp-route-companyId="@Model.Company.Id">
+            Skapa tjänst
+        </a>
+
+        <a class="btn btn-warning me-2"
+           asp-controller="TimeSlot"
+           asp-action="Generate"
+           asp-route-companyId="@Model.Company.Id">
+            Generera tidsluckor
+        </a>
+
+        <a class="btn btn-info me-2"
+           asp-controller="Booking"
+           asp-action="Index"
+           asp-route-companyId="@Model.Company.Id">
+            Visa bokningar
+        </a>
+
+        @if (Model.Role == "Admin")
+        {
+            <a class="btn btn-secondary"
+               asp-controller="CompanyUser"
+               asp-action="Index">
+                Hantera medarbetare
+            </a>
+        }
+    </div>
+
+    <hr />
+
+    <!-- Paneler -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <h5>Tjänster</h5>
+                <p>@Model.ServicesCount st</p>
+                <a class="btn btn-primary"
+                   asp-controller="Service"
+                   asp-action="Index"
+                   asp-route-companyId="@Model.Company.Id">
+                    Hantera tjänster
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <h5>Tidsluckor</h5>
+                <p>@Model.TimeSlotsCount st</p>
+                <a class="btn btn-primary"
+                   asp-controller="TimeSlot"
+                   asp-action="Index"
+                   asp-route-companyId="@Model.Company.Id">
+                    Hantera tidsluckor
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <h5>Bokningar</h5>
+                <p>@Model.BookingsCount st</p>
+                <a class="btn btn-primary"
+                   asp-controller="Booking"
+                   asp-action="Index"
+                   asp-route-companyId="@Model.Company.Id">
+                    Visa bokningar
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>

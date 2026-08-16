@@ -1,0 +1,69 @@
+@model IEnumerable<dt191g_project.Models.TimeSlot>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Tidsluckor</h1>
+
+<p>
+    <a asp-action="Create" asp-route-companyId="@Model.First().CompanyId" class="btn btn-primary">
+        Skapa ny tidslucka
+    </a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Starttid
+            </th>
+            <th>
+                Sluttid
+            </th>
+            <th>
+                Bokad
+            </th>
+            <th>
+                Skapad
+            </th>
+            <th>
+                Uppdaterad
+            </th>
+            <th>
+                Företag
+            </th>
+            <th>
+                Åtgärder
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsBooked)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Company.Name)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Redigera</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Detaljer</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Ta bort</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

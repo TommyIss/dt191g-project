@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dt191g_project.Data;
 
@@ -10,9 +11,11 @@ using dt191g_project.Data;
 namespace dt191g_project.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260815095213_AddCompanyExtraFields")]
+    partial class AddCompanyExtraFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.10");
@@ -441,9 +444,6 @@ namespace dt191g_project.Migrations
                     b.Property<bool>("IsBooked")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("TEXT");
 
@@ -453,8 +453,6 @@ namespace dt191g_project.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
-
-                    b.HasIndex("ServiceId");
 
                     b.ToTable("TimeSlots");
                 });
@@ -586,15 +584,7 @@ namespace dt191g_project.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("dt191g_project.Models.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Company");
-
-                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("dt191g_project.Models.ApplicationUser", b =>

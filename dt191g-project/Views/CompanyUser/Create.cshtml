@@ -1,0 +1,51 @@
+@model dt191g_project.Models.CompanyUser
+
+@{
+    ViewData["Title"] = "Lägg till medarbetare";
+}
+
+<h1>Lägg till medarbetare</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-5">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <!-- Välj Användare -->
+            <div class="form-group mb-3">
+                <label asp-for="UserId" class="form-label">Användare (E-post)</label>
+                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId">
+                    <option value="">-- Välj befintlig användare --</option>
+                </select>
+                <span asp-validation-for="UserId" class="text-danger"></span>
+                <small class="form-text text-muted">
+                    Hittar du inte personen? Be medarbetaren att först skapa ett konto på sidan innan du lägger till dem här.
+                </small>
+            </div>
+
+            <!-- Välj Roll -->
+            <div class="form-group mb-3">
+                <label asp-for="Role" class="form-label">Roll i företaget</label>
+                <select asp-for="Role" class="form-control">
+                    <option value="">-- Välj roll --</option>
+                    <option value="Employee">Medarbetare</option>
+                    <option value="Admin">Admin</option>
+                </select>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+
+            <!-- Knappar -->
+            <div class="form-group mt-3">
+                <input type="submit" value="Lägg till medarbetare" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary ms-2">Tillbaka till listan</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

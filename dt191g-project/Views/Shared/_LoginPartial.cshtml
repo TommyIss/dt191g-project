@@ -1,26 +1,59 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject dt191g_project.Services.UserCompanyService CompanyService
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
+        var user = await UserManager.GetUserAsync(User);
+        var companyUser = await CompanyService.GetCompanyUserAsync(user.Id);
+
+        if(companyUser != null)
+        {
+            <!-- Företagsanvändare -->
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-controller="CompanyDashboard" asp-action="Index" asp-route-companyId="@companyUser.CompanyId">
+                    Företagsdashboard
+                </a>
+            </li>
+
+            @if(companyUser.Role == "Admin")
+            {
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="CompanyUser" asp-action="Index" asp-route-companyId="@companyUser.CompanyId">
+                        Hantera medarbetare
+                    </a>
+                </li>
+            }
+        } 
+        else
+        {
+            <!-- Inloggad men inte företag -->
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-controller="CompanyRegistration" asp-action="Index">Registrera företag</a>
+            </li>
+        }
+
+    @* Alltid syligt för inloggade *@
     <li class="nav-item">
-        <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
+        <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hej @User.Identity?.Name!</a>
     </li>
+
     <li class="nav-item">
         <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+            <button  type="submit" class="nav-link btn btn-link text-dark">Logga ut</button>
         </form>
     </li>
 }
 else
 {
+
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Registrera konto</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Logga in</a>
     </li>
 }
 </ul>
