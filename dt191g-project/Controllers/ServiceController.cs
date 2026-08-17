@@ -263,6 +263,7 @@ namespace dt191g_project.Controllers
             {
                 TimeSlotId = timeSlotId,
                 ServiceId = slot.ServiceId,
+                CompanyId = slot.CompanyId,
                 CustomerId = userId,
                 CustomerName = userName,
                 CustomerEmail = userEmail,

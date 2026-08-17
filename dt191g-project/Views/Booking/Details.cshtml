@@ -77,7 +77,7 @@ else
                 <div class="card-footer bg-white">
                     <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Redigera</a>
                     <a asp-action="Index"
-                       asp-route-companyId="@Model.CompanyId"
+                       asp-route-companyId="@ViewBag.CompanyId"
                        class="btn btn-secondary">
                         Tillbaka till listan
                     </a>

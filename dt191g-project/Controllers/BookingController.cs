@@ -106,7 +106,10 @@ namespace dt191g_project.Controllers
 
             if (booking == null) return NotFound();
 
-            return View(booking); // ViewBag.CompanyId behövs inte längre här
+
+            ViewBag.CompanyId = booking.CompanyId;
+
+            return View(booking); 
         }
 
         // GET: Booking/Create
