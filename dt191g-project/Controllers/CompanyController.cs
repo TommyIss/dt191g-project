@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using dt191g_project.Data;
+using dt191g_project.Models; using dt191g_project.Data;
 using dt191g_project.Models;
 
 namespace dt191g_project.Controllers

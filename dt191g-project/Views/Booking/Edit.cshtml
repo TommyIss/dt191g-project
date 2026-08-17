@@ -4,74 +4,68 @@
     ViewData["Title"] = "Redigera bokning";
 }
 
-<h1>Redigera bokning</h1>
-<h4>Bokningsuppgifter</h4>
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="container my-4">
+    <h1>Redigera bokning</h1>
+    <h4>Bokningsuppgifter</h4>
+    <hr />
 
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="CustomerId" />
-            <input type="hidden" asp-for="UserId" />
-            <input type="hidden" asp-for="CreatedAt" />
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" name="companyId" value="@ViewBag.CompanyId" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <div class="mb-3">
-                <label asp-for="ServiceId" class="form-label">Tjänst</label>
-                <select asp-for="ServiceId" id="ServiceSelect" class="form-select" asp-items="ViewBag.ServiceId">
-                    <option value="">-- Välj tjänst först --</option>
-                </select>
-                <span asp-validation-for="ServiceId" class="text-danger"></span>
-            </div>
+                <div class="mb-3">
+                    <label asp-for="ServiceId" class="form-label">Tjänst</label>
+                    <select asp-for="ServiceId" id="ServiceSelect" class="form-select" asp-items="ViewBag.ServiceId">
+                        <option value="">-- Välj tjänst --</option>
+                    </select>
+                    <span asp-validation-for="ServiceId" class="text-danger"></span>
+                </div>
 
-            <div class="mb-3">
-                <label asp-for="TimeSlotId" class="form-label">Tidslucka</label>
-                <select asp-for="TimeSlotId" id="TimeSlotSelect" class="form-select">
-                    <option value="">-- Välj tidslucka --</option>
-                </select>
-                <span asp-validation-for="TimeSlotId" class="text-danger"></span>
-            </div>
+                <div class="mb-3">
+                    <label asp-for="TimeSlotId" class="form-label">Tidslucka</label>
+                    <select asp-for="TimeSlotId" id="TimeSlotSelect" class="form-select" disabled>
+                        <option value="">-- Laddar tider... --</option>
+                    </select>
+                    <span asp-validation-for="TimeSlotId" class="text-danger"></span>
+                </div>
 
-            <div class="mb-3">
-                <label asp-for="CustomerName" class="form-label">Kundnamn</label>
-                <input asp-for="CustomerName" class="form-control" />
-                <span asp-validation-for="CustomerName" class="text-danger"></span>
-            </div>
+                <div class="mb-3">
+                    <label asp-for="CustomerName" class="form-label">Kundnamn</label>
+                    <input asp-for="CustomerName" class="form-control" />
+                    <span asp-validation-for="CustomerName" class="text-danger"></span>
+                </div>
 
-            <div class="mb-3">
-                <label asp-for="CustomerEmail" class="form-label">E-postadress</label>
-                <input asp-for="CustomerEmail" class="form-control" type="email" />
-                <span asp-validation-for="CustomerEmail" class="text-danger"></span>
-            </div>
+                <div class="mb-3">
+                    <label asp-for="CustomerEmail" class="form-label">E-postadress</label>
+                    <input asp-for="CustomerEmail" class="form-control" type="email" />
+                    <span asp-validation-for="CustomerEmail" class="text-danger"></span>
+                </div>
 
-            <div class="mb-3">
-                <label asp-for="CustomerPhone" class="form-label">Telefonnummer</label>
-                <input asp-for="CustomerPhone" class="form-control" />
-                <span asp-validation-for="CustomerPhone" class="text-danger"></span>
-            </div>
+                <div class="mb-3">
+                    <label asp-for="CustomerPhone" class="form-label">Telefonnummer</label>
+                    <input asp-for="CustomerPhone" class="form-control" />
+                    <span asp-validation-for="CustomerPhone" class="text-danger"></span>
+                </div>
 
-            <div class="mb-3">
-                <label asp-for="Notes" class="form-label">Anteckningar / Önskemål</label>
-                <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
-                <span asp-validation-for="Notes" class="text-danger"></span>
-            </div>
+                <div class="mb-3">
+                    <label asp-for="Notes" class="form-label">Anteckningar / Önskemål</label>
+                    <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
 
-            <div class="mb-3">
-                <label asp-for="Status" class="form-label">Status</label>
-                <select asp-for="Status" class="form-select">
-                    <option value="Bekräftad">Bekräftad</option>
-                    <option value="Avbokad">Avbokad</option>
-                    <option value="Genomförd">Genomförd</option>
-                </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <input type="submit" value="Spara ändringar" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary ms-2">Tillbaka till listan</a>
-            </div>
-        </form>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Spara ändringar</button>
+                    <<a asp-action="Index"
+                        asp-route-companyId="@ViewBag.CompanyId"
+                        class="btn btn-secondary">
+                        Tillbaka till listan
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -85,42 +79,42 @@
             const serviceSelect = document.getElementById('ServiceSelect');
             const timeSlotSelect = document.getElementById('TimeSlotSelect');
 
-            const currentSelectedTimeSlotId = "@(Model?.TimeSlotId.ToString() ?? "")";
+            const selectedSlotId = "@(Model != null ? Model.TimeSlotId.ToString() : "")";
 
-            async function loadTimeSlots(serviceId, selectedSlotId) {
-                const slotIdParam = selectedSlotId ? selectedSlotId : "";
-
+            async function loadTimeSlots(serviceId, targetSlotId) {
                 if (!serviceId) {
-                    timeSlotSelect.innerHTML = '<option value="">-- Välj en tjänst ovan --</option>';
+                    timeSlotSelect.innerHTML = '<option value="">-- Välj en tjänst ovan först --</option>';
                     timeSlotSelect.disabled = true;
                     return;
                 }
 
-                timeSlotSelect.innerHTML = '<option value="">-- Laddar tider... --</option>';
+                timeSlotSelect.innerHTML = '<option value="">-- Laddar lediga tider... --</option>';
                 timeSlotSelect.disabled = true;
 
                 try {
-                    // OBS: Ändrat från /Bookings/ till /Booking/ för att matcha controller-namnet!
-                    const response = await fetch(`/Booking/GetTimeSlotsByService?serviceId=${serviceId}&currentSlotId=${slotIdParam}`);
+                    const slotParam = targetSlotId ? targetSlotId : "";
+                    const response = await fetch(`/Booking/GetTimeSlotsByService?serviceId=${serviceId}&currentSlotId=${slotParam}`);
+
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
                     const timeSlots = await response.json();
 
-                    timeSlotSelect.innerHTML = '<option value="">-- Välj tidslucka --</option>';
-
-                    if (timeSlots.length === 0) {
-                        timeSlotSelect.innerHTML = '<option value="">Inga tidsluckor hittades</option>';
+                    if (!timeSlots || timeSlots.length === 0) {
+                        timeSlotSelect.innerHTML = '<option value="">Inga lediga tidsluckor hittades</option>';
+                        timeSlotSelect.disabled = true;
                         return;
                     }
+
+                    timeSlotSelect.innerHTML = '<option value="">-- Välj tidslucka --</option>';
 
                     timeSlots.forEach(slot => {
                         const option = document.createElement('option');
                         option.value = slot.id;
                         option.textContent = slot.displayText;
 
-                        if (slotIdParam && String(slot.id) === String(slotIdParam)) {
+                        if (targetSlotId && String(slot.id) === String(targetSlotId)) {
                             option.selected = true;
                         }
 
@@ -131,18 +125,21 @@
                 } catch (error) {
                     console.error('Fel vid hämtning av tidsluckor:', error);
                     timeSlotSelect.innerHTML = '<option value="">Kunde inte hämta tider</option>';
+                    timeSlotSelect.disabled = true;
                 }
             }
 
-            // 1. Körs direkt när sidan laddas för att fylla på tider för befintlig bokning
-            if (serviceSelect.value) {
-                loadTimeSlots(serviceSelect.value, currentSelectedTimeSlotId);
+            // Ladda tider direkt vid sidladdning baserat på befintlig bokning
+            if (serviceSelect && serviceSelect.value) {
+                loadTimeSlots(serviceSelect.value, selectedSlotId);
             }
 
-            // 2. Körs när användaren byter tjänst i dropdown-menyn
-            serviceSelect.addEventListener('change', function () {
-                loadTimeSlots(this.value, null);
-            });
+            // Ladda om tider när användaren ändrar tjänst
+            if (serviceSelect) {
+                serviceSelect.addEventListener('change', function () {
+                    loadTimeSlots(this.value, null);
+                });
+            }
         });
     </script>
 }

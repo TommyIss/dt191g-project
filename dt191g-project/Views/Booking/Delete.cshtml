@@ -39,7 +39,11 @@
                 <form asp-action="Delete">
                     <input type="hidden" asp-for="Id" />
                     <button type="submit" class="btn btn-danger">Bekräfta borttagning</button>
-                    <a asp-action="Index" class="btn btn-secondary ms-2">Avbryt</a>
+                    <a asp-action="Index"
+                       asp-route-companyId="@ViewBag.CompanyId"
+                       class="btn btn-secondary">
+                       Avbryt
+                   </a>
                 </form>
             </div>
         </div>

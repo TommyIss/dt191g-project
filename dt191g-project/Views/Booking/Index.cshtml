@@ -4,62 +4,77 @@
     ViewData["Title"] = "Bokningar";
 }
 
-<h1>Bokningar</h1>
-
-<p>
-    <a asp-action="Create" class="btn btn-success">Skapa en bokning</a>
-</p>
-
-@if (!Model.Any(b => b.Status == "Bekräftad" || b.Status == "Confirmed"))
-{
-    <div class="alert alert-info">
-        Det finns inga bekräftade bokningar att visa.
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h1>Bokningar</h1>
+            <h5 class="text-muted">@ViewBag.CompanyName</h5>
+        </div>
+        <!-- Skickar med companyId till Create-åtgärden -->
+        <!-- Om du har ett ViewBag.CompanyId som är större än 0 -->
+        @if (ViewBag.CompanyId != null && (int)ViewBag.CompanyId > 0)
+        {
+            <a asp-action="Create" asp-route-companyId="@ViewBag.CompanyId" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Skapa Ny Bokning
+            </a>
+        }
+        else
+        {
+            <!-- Om ViewBag saknas, hämta från första bokningen i listan (om sån finns) eller länka utan parameter -->
+            <a asp-action="Create" asp-route-companyId="@Model.FirstOrDefault()?.CompanyId" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Skapa Ny Bokning
+            </a>
+        }
     </div>
-}
-else
-{
-    <table class="table table-striped align-middle">
-        <thead>
-            <tr>
-                <th>Kundnamn</th>
-                <th>E-post</th>
-                <th>Telefon</th>
-                <th>Anteckningar</th>
-                <th>Status</th>
-                <th>Skapad</th>
-                <th>Uppdaterad</th>
-                <th>Tjänst</th>
-                <th>Tidslucka</th>
-                <th>Åtgärder</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                @if (item.Status == "Bekräftad" || item.Status == "Confirmed")
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            Inga bokningar finns registrerade ännu.
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Kund</th>
+                    <th>Tjänst</th>
+                    <th>Tid</th>
+                    <th>Telefon</th>
+                    <th>Status</th>
+                    <th>Åtgärder</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.CustomerName)</td>
-                        <td>@Html.DisplayFor(modelItem => item.CustomerEmail)</td>
-                        <td>@Html.DisplayFor(modelItem => item.CustomerPhone)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Notes)</td>
                         <td>
-                            <span class="badge bg-success">@item.Status</span>
+                            <strong>@(item.CustomerName ?? item.Customer?.UserName ?? "Okänd")</strong><br />
+                            <small class="text-muted">@(item.CustomerEmail ?? item.Customer?.Email)</small>
                         </td>
-                        <td>@Html.DisplayFor(modelItem => item.CreatedAt)</td>
-                        <td>@Html.DisplayFor(modelItem => item.UpdatedAt)</td>
-                        <td>@(item.Service?.Title ?? "Ej angiven")</td>
+                        <td>@(item.Service?.Title ?? "Tjänst saknas")</td>
                         <td>
-                            @(item.TimeSlot != null ? $"{item.TimeSlot.StartTime:yyyy-MM-dd HH:mm} - {item.TimeSlot.EndTime:HH:mm}" : "N/A")
+                            @if (item.TimeSlot != null)
+                            {
+                                <span>@item.TimeSlot.StartTime.ToString("yyyy-MM-dd HH:mm") - @item.TimeSlot.EndTime.ToString("HH:mm")</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Tid saknas</span>
+                            }
                         </td>
+                        <td>@(item.CustomerPhone ?? item.Customer?.PhoneNumber)</td>
+                        <td>@item.Status</td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id">Redigera</a> |
-                            <a asp-action="Details" asp-route-id="@item.Id">Detaljer</a> |
-                            <a asp-action="Delete" asp-route-id="@item.Id">Ta bort</a>
+                            <a asp-action="Details" asp-route-id="@item.Id" asp-route-companyId="@ViewBag.CompanyId" class="btn btn-sm btn-info">Detaljer</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" asp-route-companyId="@ViewBag.CompanyId" class="btn btn-sm btn-warning">Redigera</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" asp-route-companyId="@ViewBag.CompanyId" class="btn btn-sm btn-danger">Ta bort</a>
                         </td>
                     </tr>
                 }
-            }
-        </tbody>
-    </table>
-}
+            </tbody>
+        </table>
+    }
+</div>

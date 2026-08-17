@@ -4,55 +4,70 @@
     ViewData["Title"] = "Generera tidsluckor";
 }
 
-<h1>Generera tidsluckor</h1>
-<hr />
+<div class="container my-4">
+    <h1>Generera tidsluckor</h1>
+    <hr />
 
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Generate" method="post">
-            <input type="hidden" asp-for="CompanyId" />
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Generate" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <div class="form-group mb-3">
-                <label asp-for="StartDate" class="form-label">Startdatum</label>
-                <input asp-for="StartDate" class="form-control" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
-            </div>
+                <div class="form-group mb-3">
+                    <label asp-for="StartDate" class="form-label">Startdatum</label>
+                    <input asp-for="StartDate" class="form-control" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="EndDate" class="form-label">Slutdatum</label>
-                <input asp-for="EndDate" class="form-control" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
-            </div>
+                <div class="form-group mb-3">
+                    <label asp-for="EndDate" class="form-label">Slutdatum</label>
+                    <input asp-for="EndDate" class="form-control" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="OpeningTime" class="form-label">Öppnar</label>
-                <input asp-for="OpeningTime" class="form-control" type="time" />
-            </div>
+                <div class="form-group mb-3">
+                    <label asp-for="OpeningTime" class="form-label">Öppnar</label>
+                    <input asp-for="OpeningTime" class="form-control" type="time" />
+                    <span asp-validation-for="OpeningTime" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="ClosingTime" class="form-label">Stänger</label>
-                <input asp-for="ClosingTime" class="form-control" type="time" />
-            </div>
-            <div class="form-group mb-3">
-                <label class="form-label">Tjänst</label>
-                <select asp-for="ServiceId" class="form-control" asp-items="@(new SelectList(ViewBag.Services ?? new List<dt191g_project.Models.Service>(), "Id", "Title"))">
-                    <option value="">-- Välj tjänst --</option>
-                </select>
-                <span asp-validation-for="ServiceId" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="IntervalMinutes" class="form-label">Intervall (minuter)</label>
-                <input asp-for="IntervalMinutes" class="form-control" type="number" min="5" max="180" />
-            </div>
+                <div class="form-group mb-3">
+                    <label asp-for="ClosingTime" class="form-label">Stänger</label>
+                    <input asp-for="ClosingTime" class="form-control" type="time" />
+                    <span asp-validation-for="ClosingTime" class="text-danger"></span>
+                </div>
 
-            <button type="submit" class="btn btn-warning">Generera</button>
-        </form>
+                <div class="form-group mb-3">
+                    <label asp-for="ServiceId" class="form-label">Tjänst</label>
+                    <select asp-for="ServiceId" class="form-select" asp-items="@(new SelectList(ViewBag.Services ?? new List<dt191g_project.Models.Service>(), "Id", "Title"))">
+                        <option value="">-- Välj tjänst --</option>
+                    </select>
+                    <span asp-validation-for="ServiceId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="IntervalMinutes" class="form-label">Intervall (minuter)</label>
+                    <input asp-for="IntervalMinutes" class="form-control" type="number" min="5" max="180" />
+                    <span asp-validation-for="IntervalMinutes" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-warning">Generera</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a class="btn btn-secondary"
+           asp-controller="CompanyDashboard"
+           asp-action="Index"
+           asp-route-companyId="@(Model?.CompanyId ?? 0)">
+            Tillbaka till Dashboard
+        </a>
     </div>
 </div>
 
-<div class="mt-3">
-    <a class="btn btn-secondary"
-       asp-controller="CompanyDashboard"
-       asp-action="Index"
-       asp-route-companyId="@Model.CompanyId">
-        Tillbaka till Dashboard
-    </a>
-</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

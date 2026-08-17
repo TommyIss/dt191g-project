@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace dt191g_project.Controllers
 {
+    [Authorize]
     public class ServiceController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -27,11 +28,21 @@ namespace dt191g_project.Controllers
             _userManager = userManager;
         }
 
-        // GET: Service
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Services.Include(s => s.Company);
-            return View(await applicationDbContext.ToListAsync());
+            var userId = _userManager.GetUserId(User);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Challenge();
+            }
+
+            var services = await _context.Services
+                .Include(s => s.Company)
+                .Where(s => s.Company != null && (s.Company.UserId == userId || s.Company.CompanyUsers.Any(cu => cu.UserId == userId)))
+                .ToListAsync();
+
+            return View(services);
         }
 
         // GET: Service/Details/5
@@ -45,6 +56,7 @@ namespace dt191g_project.Controllers
             var service = await _context.Services
                 .Include(s => s.Company)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (service == null)
             {
                 return NotFound();
@@ -54,32 +66,34 @@ namespace dt191g_project.Controllers
         }
 
         // GET: Service/Create
-        public IActionResult Create(int? companyId)
+        public async Task<IActionResult> Create()
         {
-            if (companyId == null)
+            var userId = _userManager.GetUserId(User);
+            var company = await _context.Companies
+                .FirstOrDefaultAsync(c => c.UserId == userId || c.CompanyUsers.Any(cu => cu.UserId == userId));
+
+            if (company == null)
             {
-                return NotFound();
+                return RedirectToAction("Create", "Company");
             }
 
-            ViewBag.CompanyId = companyId;
+            ViewBag.CompanyId = company.Id;
             return View();
         }
 
         // POST: Service/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CompanyId,Title,Description,DurationMinutes,Price,Category,IsActive")] Service service)
         {
-            // Ta bort validering för relationen till Company
+            // Ta bort validering för relationer
             ModelState.Remove("Company");
             ModelState.Remove("Bookings");
 
             if (ModelState.IsValid)
             {
-                service.CreatedAt = DateTime.Now;
-                service.UpdatedAt = DateTime.Now;
+                service.CreatedAt = DateTime.UtcNow;
+                service.UpdatedAt = DateTime.UtcNow;
 
                 _context.Add(service);
                 await _context.SaveChangesAsync();
@@ -99,18 +113,33 @@ namespace dt191g_project.Controllers
                 return NotFound();
             }
 
-            var service = await _context.Services.FindAsync(id);
+            var service = await _context.Services
+                .Include(s => s.Company)
+                .ThenInclude(c => c.CompanyUsers)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
             if (service == null)
             {
                 return NotFound();
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", service.CompanyId);
+
+            var userId = _userManager.GetUserId(User);
+
+            // Kontrollera om den inloggade användaren är ägare (UserId) 
+            // ELLER kopplad via CompanyUsers till tjänstens företag
+            bool isAuthorized = service.Company != null &&
+                (service.Company.UserId == userId || service.Company.CompanyUsers.Any(cu => cu.UserId == userId));
+
+            if (!isAuthorized)
+            {
+                return Forbid();
+            }
+
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", service.CompanyId);
             return View(service);
         }
 
         // POST: Service/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyId,Title,Description,DurationMinutes,Price,Category,IsActive,CreatedAt,UpdatedAt")] Service service)
@@ -120,7 +149,21 @@ namespace dt191g_project.Controllers
                 return NotFound();
             }
 
-            // Förhindra att ModelState misslyckas på navigationsegenskaper
+            var userId = _userManager.GetUserId(User);
+
+            // Hämta företaget som tjänsten tillhör för behörighetskontroll
+            var company = await _context.Companies
+                .Include(c => c.CompanyUsers)
+                .FirstOrDefaultAsync(c => c.Id == service.CompanyId);
+
+            bool isAuthorized = company != null &&
+                (company.UserId == userId || company.CompanyUsers.Any(cu => cu.UserId == userId));
+
+            if (!isAuthorized)
+            {
+                return Forbid();
+            }
+
             ModelState.Remove("Company");
             ModelState.Remove("Bookings");
 
@@ -128,12 +171,9 @@ namespace dt191g_project.Controllers
             {
                 try
                 {
-                    // Sätt uppdateringstiden automatiskt i bakkoden
-                    service.UpdatedAt = DateTime.Now;
+                    service.UpdatedAt = DateTime.UtcNow;
 
                     _context.Update(service);
-
-                    // Säkerställ att ursprungligt skapandedatum bevaras
                     _context.Entry(service).Property(x => x.CreatedAt).IsModified = false;
 
                     await _context.SaveChangesAsync();
@@ -151,31 +191,33 @@ namespace dt191g_project.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", service.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", service.CompanyId);
             return View(service);
         }
 
-        // Visa Tidsluckor för en specifik tjänst
-        public IActionResult TimeSlots(int serviceId)
+        // Visa tidsluckor för en specifik tjänst
+        [AllowAnonymous]
+        public async Task<IActionResult> TimeSlots(int serviceId)
         {
-            var service = _context.Services
+            var service = await _context.Services
                 .Include(s => s.Company)
-                .FirstOrDefault(s => s.Id == serviceId);
+                .FirstOrDefaultAsync(s => s.Id == serviceId);
 
             if (service == null)
+            {
                 return NotFound();
+            }
 
-            var slots = _context.TimeSlots
+            var slots = await _context.TimeSlots
                 .Where(t => t.ServiceId == serviceId && !t.IsBooked)
                 .OrderBy(t => t.StartTime)
-                .ToList();
+                .ToListAsync();
 
             ViewBag.Service = service;
 
             return View(slots);
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Book(int timeSlotId)
         {
@@ -189,13 +231,12 @@ namespace dt191g_project.Controllers
                 return NotFound();
             }
 
-            
             return View(timeSlot);
         }
 
-        // Bekräfta bokning av en Tidslucka
-        [Authorize]
+        // Bekräfta bokning av en tidslucka
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> BookConfirmed(int timeSlotId, string? notes)
         {
             var slot = await _context.TimeSlots
@@ -204,9 +245,16 @@ namespace dt191g_project.Controllers
                 .FirstOrDefaultAsync(t => t.Id == timeSlotId);
 
             if (slot == null || slot.IsBooked)
+            {
                 return NotFound();
+            }
 
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Challenge();
+            }
+
             var userId = user.Id;
             var userEmail = user.Email ?? "Ej angiven";
             var userName = user.UserName ?? "Ej angiven";
@@ -221,8 +269,8 @@ namespace dt191g_project.Controllers
                 CustomerPhone = "",
                 Notes = notes ?? "",
                 Status = "Bekräftad",
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
 
             slot.IsBooked = true;
@@ -239,12 +287,10 @@ namespace dt191g_project.Controllers
                 userEmail
             );
 
-
             return RedirectToAction("MyBookings");
         }
 
         // Visa användarens bokningar
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> MyBookings()
         {
@@ -261,7 +307,6 @@ namespace dt191g_project.Controllers
             return View(bookings);
         }
 
-        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CancelBooking(int bookingId)
@@ -271,7 +316,7 @@ namespace dt191g_project.Controllers
 
             var booking = await _context.Bookings
                 .Include(b => b.TimeSlot)
-                .ThenInclude(ts => ts.Company)
+                    .ThenInclude(ts => ts.Company)
                 .Include(b => b.Service)
                 .FirstOrDefaultAsync(b => b.Id == bookingId && (b.CustomerId == userId || b.UserId == userId));
 
@@ -290,19 +335,19 @@ namespace dt191g_project.Controllers
 
             await _context.SaveChangesAsync();
 
-            var customerEmail = booking.CustomerEmail;
+            // Säkerställ att TimeSlot och Company inte är null innan mailet skickas
+            var company = booking.TimeSlot?.Company;
 
             await _emailService.SendCancellationConfirmation(
                 booking,
                 booking.TimeSlot,
                 booking.Service,
-                booking.TimeSlot.Company,
+                company,
                 booking.CustomerEmail
             );
 
             return RedirectToAction("MyBookings");
         }
-
 
         // GET: Service/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -314,10 +359,22 @@ namespace dt191g_project.Controllers
 
             var service = await _context.Services
                 .Include(s => s.Company)
+                .ThenInclude(c => c.CompanyUsers)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (service == null)
             {
                 return NotFound();
+            }
+
+            // Ägarkontroll: Stöd för både direkt UserId och CompanyUsers
+            var userId = _userManager.GetUserId(User);
+            bool isAuthorized = service.Company != null &&
+                (service.Company.UserId == userId || service.Company.CompanyUsers.Any(cu => cu.UserId == userId));
+
+            if (!isAuthorized)
+            {
+                return Forbid();
             }
 
             return View(service);
@@ -328,19 +385,34 @@ namespace dt191g_project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var service = await _context.Services.FindAsync(id);
+            // Hämta tjänsten inkl. företaget och dess användare för korrekt behörighetskontroll
+            var service = await _context.Services
+                .Include(s => s.Company)
+                .ThenInclude(c => c.CompanyUsers)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
             if (service != null)
             {
+                // Ägarkontroll
+                var userId = _userManager.GetUserId(User);
+                bool isAuthorized = service.Company != null &&
+                    (service.Company.UserId == userId || service.Company.CompanyUsers.Any(cu => cu.UserId == userId));
+
+                if (!isAuthorized)
+                {
+                    return Forbid();
+                }
+
                 _context.Services.Remove(service);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-
         // Tjänstfilter
-        public IActionResult Search(ServiceFilterModel filter)
+        [AllowAnonymous]
+        public async Task<IActionResult> Search(ServiceFilterModel filter)
         {
             var query = _context.Services
                 .Include(s => s.Company)
@@ -364,13 +436,12 @@ namespace dt191g_project.Controllers
             if (filter.DurationMinutes.HasValue)
                 query = query.Where(s => s.DurationMinutes == filter.DurationMinutes.Value);
 
-            var results = query.ToList();
+            var results = await query.ToListAsync();
 
             ViewBag.Filter = filter;
 
             return View(results);
         }
-
 
         private bool ServiceExists(int id)
         {

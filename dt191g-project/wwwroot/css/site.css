@@ -1,31 +1,62 @@
-html {
-  font-size: 14px;
-}
+/* wwwroot/css/site.css */
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+:root {
+    --color-primary: #EC6530;
+    --color-primary-hover: #d8521d;
+    --color-secondary: #FFAE6E;
+    --color-soft-bg: #FFE3E3;
+    --color-accent: #8FDDDF;
+    --color-text-dark: #2B2D42;
+    --color-white: #FFFFFF;
+    --radius-md: 12px;
+    --shadow-soft: 0 4px 15px rgba(236, 101, 48, 0.08);
 }
 
 body {
-  margin-bottom: 60px;
+    background-color: #FAFAFA;
+    color: var(--color-text-dark);
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* Huvudbehållare */
+.main-layout-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+/* Navbar */
+.custom-navbar {
+    background-color: var(--color-white) !important;
+    border-bottom: 3px solid var(--color-soft-bg);
+}
+
+.navbar-brand {
+    color: var(--color-primary) !important;
+    font-weight: 800;
+}
+
+.nav-link {
+    color: var(--color-text-dark) !important;
+}
+
+    .nav-link:hover {
+        color: var(--color-primary) !important;
+        background-color: var(--color-soft-bg);
+    }
+
+/* Main Content Surface */
+.main-content {
+    flex: 1;
+    background-color: var(--color-white); /* Ändra till var(--color-soft-bg) om du vill ha den ljusrosa mjuktonen */
+    border-radius: var(--radius-md);
+    padding: 2rem;
+    box-shadow: var(--shadow-soft);
+}
+
+/* Footer */
+.custom-footer {
+    background-color: var(--color-soft-bg);
+    color: var(--color-text-dark);
+    padding: 1.5rem 0;
+    margin-top: 2rem;
 }

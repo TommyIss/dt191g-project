@@ -1,13 +1,13 @@
 @model IEnumerable<dt191g_project.Models.TimeSlot>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Tidsluckor";
 }
 
 <h1>Tidsluckor</h1>
 
 <p>
-    <a asp-action="Create" asp-route-companyId="@Model.First().CompanyId" class="btn btn-primary">
+    <a asp-action="Create" asp-route-companyId="@ViewBag.CompanyId" class="btn btn-primary">
         Skapa ny tidslucka
     </a>
 </p>
@@ -30,7 +30,7 @@
                 Uppdaterad
             </th>
             <th>
-                Företag
+                Tjänst
             </th>
             <th>
                 Åtgärder
@@ -56,7 +56,7 @@
                 @Html.DisplayFor(modelItem => item.UpdatedAt)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
+                @Html.DisplayFor(modelItem => item.Service.Title)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Redigera</a> |

@@ -15,7 +15,7 @@ namespace dt191g_project.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.10");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.11");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -157,6 +157,9 @@ namespace dt191g_project.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
@@ -219,6 +222,9 @@ namespace dt191g_project.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
@@ -227,7 +233,6 @@ namespace dt191g_project.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CustomerId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CustomerName")
@@ -314,7 +319,15 @@ namespace dt191g_project.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId1")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Companies");
                 });
@@ -516,8 +529,7 @@ namespace dt191g_project.Migrations
                     b.HasOne("dt191g_project.Models.ApplicationUser", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("dt191g_project.Models.Service", "Service")
                         .WithMany("Bookings")
@@ -536,6 +548,15 @@ namespace dt191g_project.Migrations
                     b.Navigation("Service");
 
                     b.Navigation("TimeSlot");
+                });
+
+            modelBuilder.Entity("dt191g_project.Models.Company", b =>
+                {
+                    b.HasOne("dt191g_project.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId1");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("dt191g_project.Models.CompanyUser", b =>

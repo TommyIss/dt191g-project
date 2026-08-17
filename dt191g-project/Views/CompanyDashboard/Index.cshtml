@@ -10,7 +10,7 @@
 
      @* Företagsinfo  *@
     <div class="row mb-4">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <h4>Företagsinformation</h4>
             <p><strong>Adress:</strong> @Model.Company.Address</p>
             <p><strong>Stad:</strong> @Model.Company.City</p>
@@ -27,13 +27,6 @@
                     Ändra företagsinformation
                 </a>
             }
-        </div>
-
-        <div class="col-md-6">
-            <h4>Statistik</h4>
-            <p><strong>Tjänster:</strong> @Model.ServicesCount st</p>
-            <p><strong>Tidsluckor:</strong> @Model.TimeSlotsCount st</p>
-            <p><strong>Bokningar:</strong> @Model.BookingsCount st</p>
         </div>
     </div>
 

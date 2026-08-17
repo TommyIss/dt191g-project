@@ -7,70 +7,82 @@
 <h1>Bokningsdetaljer</h1>
 <hr />
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-light">
-                <h5 class="card-title mb-0">Bokning #@Model.Id</h5>
-            </div>
-            <div class="card-body">
-                <dl class="row mb-0">
-                    <dt class="col-sm-4">Tjänst</dt>
-                    <dd class="col-sm-8">@(Model.Service?.Title ?? "Ej angiven")</dd>
+@if (Model == null)
+{
+    <div class="alert alert-warning">Bokning hittades inte.</div>
+    <a asp-action="Index" class="btn btn-secondary">Tillbaka till listan</a>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">Bokning #@Model.Id</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Tjänst</dt>
+                        <dd class="col-sm-8">@(Model.Service?.Title ?? "Ej angiven")</dd>
 
-                    <dt class="col-sm-4">Pris</dt>
-                    <dd class="col-sm-8">@(Model.Service != null ? $"{Model.Service.Price} kr" : "N/A")</dd>
+                        <dt class="col-sm-4">Pris</dt>
+                        <dd class="col-sm-8">@(Model.Service != null ? $"{Model.Service.Price} kr" : "N/A")</dd>
 
-                    <dt class="col-sm-4">Tidslucka</dt>
-                    <dd class="col-sm-8">
-                        @(Model.TimeSlot != null
-                            ? $"{Model.TimeSlot.StartTime:yyyy-MM-dd HH:mm} - {Model.TimeSlot.EndTime:HH:mm}"
-                            : "N/A")
-                    </dd>
+                        <dt class="col-sm-4">Tidslucka</dt>
+                        <dd class="col-sm-8">
+                            @(Model.TimeSlot != null
+                                ? $"{Model.TimeSlot.StartTime:yyyy-MM-dd HH:mm} - {Model.TimeSlot.EndTime:HH:mm}"
+                                : "N/A")
+                        </dd>
 
-                    <dt class="col-sm-4">Status</dt>
-                    <dd class="col-sm-8">
-                        @if (Model.Status == "Bekräftad" || Model.Status == "Confirmed")
-                        {
-                            <span class="badge bg-success">@Model.Status</span>
-                        }
-                        else if (Model.Status == "Avbokad" || Model.Status == "Cancelled")
-                        {
-                            <span class="badge bg-danger">@Model.Status</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-secondary">@Model.Status</span>
-                        }
-                    </dd>
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Status == "Bekräftad" || Model.Status == "Confirmed")
+                            {
+                                <span class="badge bg-success">@Model.Status</span>
+                            }
+                            else if (Model.Status == "Avbokad" || Model.Status == "Cancelled")
+                            {
+                                <span class="badge bg-danger">@Model.Status</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@Model.Status</span>
+                            }
+                        </dd>
 
-                    <hr class="my-3" />
+                        <hr class="my-3" />
 
-                    <dt class="col-sm-4">Kundnamn</dt>
-                    <dd class="col-sm-8">@Html.DisplayFor(model => model.CustomerName)</dd>
+                        <dt class="col-sm-4">Kundnamn</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.CustomerName)</dd>
 
-                    <dt class="col-sm-4">E-post</dt>
-                    <dd class="col-sm-8">@Html.DisplayFor(model => model.CustomerEmail)</dd>
+                        <dt class="col-sm-4">E-post</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.CustomerEmail)</dd>
 
-                    <dt class="col-sm-4">Telefon</dt>
-                    <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.CustomerPhone) ? "Ej angivet" : Model.CustomerPhone)</dd>
+                        <dt class="col-sm-4">Telefon</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.CustomerPhone) ? "Ej angivet" : Model.CustomerPhone)</dd>
 
-                    <dt class="col-sm-4">Anteckningar</dt>
-                    <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Notes) ? "Inga anteckningar" : Model.Notes)</dd>
+                        <dt class="col-sm-4">Anteckningar</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Notes) ? "Inga anteckningar" : Model.Notes)</dd>
 
-                    <hr class="my-3" />
+                        <hr class="my-3" />
 
-                    <dt class="col-sm-4">Skapad</dt>
-                    <dd class="col-sm-8">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</dd>
+                        <dt class="col-sm-4">Skapad</dt>
+                        <dd class="col-sm-8">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</dd>
 
-                    <dt class="col-sm-4">Senast uppdaterad</dt>
-                    <dd class="col-sm-8">@Model.UpdatedAt.ToString("yyyy-MM-dd HH:mm")</dd>
-                </dl>
-            </div>
-            <div class="card-footer bg-white">
-                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Redigera</a>
-                <a asp-action="Index" class="btn btn-secondary ms-2">Tillbaka till listan</a>
+                        <dt class="col-sm-4">Senast uppdaterad</dt>
+                        <dd class="col-sm-8">@Model.UpdatedAt.ToString("yyyy-MM-dd HH:mm")</dd>
+                    </dl>
+                </div>
+                <div class="card-footer bg-white">
+                    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Redigera</a>
+                    <a asp-action="Index"
+                       asp-route-companyId="@Model.CompanyId"
+                       class="btn btn-secondary">
+                        Tillbaka till listan
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}

@@ -18,5 +18,7 @@
         public ICollection<Service> Services { get; set; }
         public ICollection<TimeSlot> TimeSlots { get; set; }
         public ICollection<CompanyUser> CompanyUsers { get; set; }
+        public string? UserId { get; set; }
+        public ApplicationUser? User { get; set; }
     }
 }
